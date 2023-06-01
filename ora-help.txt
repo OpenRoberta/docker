@@ -1,0 +1,13 @@
+Please read the README.md of the git repository "OpenRoberta/docker".
+=====================================================================
+
+Commands:
+  help       get help (this text).
+  
+  new-docker-setup {base-dir}
+             creates a new test server setup in {base-dir}. {base-dir} must not exist.
+  new-server-in-docker-setup {base-dir} {server-name}
+             creates a server in the existing test server setup '{base-dir}'. The dirs '{base-dir}/server/{server-name}' and '{base-dir}/db/{server-name}'
+             must not exist.
+  update-docker-setup {base-dir}
+             expects the test server setup in {base-dir}. Copies all resources from 'openroberta/conf' and 'openroberta/scripts' into {base-dir}/... .
