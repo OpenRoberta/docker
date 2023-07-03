@@ -1,8 +1,10 @@
 #!/bin/bash
 
-if [ ! -d openroberta ]
+if [ -d .git -a -f ora.sh -a -d openroberta ]
 then
-  echo 'please start this script from the root of the Git working tree - exit 12'
+  :
+else
+  echo 'please start this script from the root of the openroberta docker git repository - exit 12'
   exit 12
 fi
 
