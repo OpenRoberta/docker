@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 ENV LANG de_DE.UTF-8
 ENV LANGUAGE de_DE:de
