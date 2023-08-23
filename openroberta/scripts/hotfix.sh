@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo '
 # --------------------------------------------------------------------------------------------------------------------- #
 # hotfix script: merge a hotfix to master, merge to develop, setup develop for the next version.                        #

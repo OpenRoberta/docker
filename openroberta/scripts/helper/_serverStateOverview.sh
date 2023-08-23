@@ -1,3 +1,5 @@
+#!/bin/bash
+
 NGINX_LOG='/data/openroberta-lab/nginx/logs/access.log'
 AUTORESTART_LOG='/data/openroberta-lab/logs/autorestart.txt'
 

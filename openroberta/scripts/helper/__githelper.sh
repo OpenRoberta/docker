@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # helper functions - MUST BE SOURCED
 
 # ask a question. If the user answers "y", everything is fine. Otherwise exit 12

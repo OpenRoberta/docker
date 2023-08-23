@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # show the usage of some server resources:
 # - file descriptors
 # - threads

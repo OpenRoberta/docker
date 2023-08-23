@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # show the assembled activities from users once. This is the data delivered by the 2 REST calls /rest/alive and /rest/data/server/dbsessions
 # Usage:
 # SERVER_NAME: name of a server, as test, dev, dev1...dev9. REQUIRED.

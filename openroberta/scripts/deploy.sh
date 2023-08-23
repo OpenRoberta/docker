@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo '
 # ------------------------------------------------------------------------------------------------------------- #
 # deployment script: deploy a version at master, setup develop for the next version.                            #
