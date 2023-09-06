@@ -1,23 +1,33 @@
-# Instructions to setup the lab using DOCKER container (2023-04-19)
+# Instructions to set up the lab using DOCKER container (2023-04-19)
 
 This text is for _developer_ and _maintainer_ of the openroberta lab, _not_ if you want to run a local server. Running a local server is described in our
 [wiki on GitHub](https://github.com/OpenRoberta/openroberta-lab/wiki/Instructions-to-run-a-openroberta-lab-server-using-DOCKER). This text describes the
 docker-related scripts, which are used for a large installation (as our prod and test servers are),
 
-- to setup a docker network,
+- to set up a docker network,
 - create docker images for a data base server and lab server and
 - run docker container of the OpenRoberta lab.
 
 On every Linux-based machine it should be easy to run our setup. Commands are shown as bash commands. Windows 10 should work too, if you are careful with
-pathes. Btw: if you install git for Windows, you get a nice bash running in Windows.
+path's. Btw: if you install git for Windows, you get a nice bash running in Windows.
 
 `docker` must be installed. `java` version 11 (eleven!) must be installed. `mvn` must be installed.
+Note: docker stores its data in the directory `/var/lib/docker`. Sometimes the underlying filesystem (usually `/var/`) is too small for this data.
+If you have a large filesystem, you can move the data by executing:
+```bash
+# move docker files from /var/lib/docker to /data/lib/docker
+service  docker stop
+mkdir -p /data/lib/
+mv /var/lib/docker/ /data/lib/docker/
+ln -s /data/lib/docker/ /var/lib/docker
+service docker start
+```
 
 ## Create an instance of our docker installation
 
 - run `git clone https://github.com/OpenRoberta/docker`.
 
-- **make the foundationn** by calling `./ora.sh new-docker-setup <BASEDIR>`. The `<BASEDIR>` must _not_ exist.
+- **make the foundation** by calling `./ora.sh new-docker-setup <BASEDIR>`. The `<BASEDIR>` must _not_ exist.
 - move the docker git repository to `<BASEDIR>/git`. You may need it later to update the docker installation.
 - cd to `<BASEDIR>/git` and call `git clone https://github.com/OpenRoberta/openroberta-lab`. This repository is needed later when docker images are generated.
 - cd to `<BASEDIR>/git/openroberta-lab` and call `mvn clean install -DskipTests`. This must succeed. The generated resources are needed if you want
@@ -25,8 +35,8 @@ pathes. Btw: if you install git for Windows, you get a nice bash running in Wind
 
 - **create the servers you need** by calling `./ora.sh new-server-in-docker-setup <BASEDIR> <SERVER>`. Note, that `test, dev, dev1...dev9` are the
   only names accepted as server names. It is easy to add or remove server later.
-- edit the properpy file `decl.sh` for each server. The data to be filled in should be obvious.
-- for each server a data base of its own is needed. Double check that the data bases are in `<BASEDIR>/db`. An empty database can be created
+- edit the property file `decl.sh` for each server. The data to be filled in should be obvious.
+- for each server a database of its own is needed. Double check that the databases are in `<BASEDIR>/db`. An empty database can be created
   - if you cd to `<BASEDIR>/git/openroberta-lab` and
   - call `./admin.sh -git-mode -db-parentdir <BASEDIR>/db/<SERVER> create-empty-db`
 - in the global `<BASEDIR>/decl.sh`
@@ -41,7 +51,7 @@ You have to
 - create a new docker bridge network (`RUN gen-net`). The name of the network is defined in the global `decl.sh`.
 - generate a database server image and start the database container (`RUN gen-dbc` and `RUN start-dbc`). Check the result with `docker ps`. Inspect the log file
   in `BASEDIR/db/dbAdmin/`
-- deploy the server ((`RUN deploy SERVER`). Check the result with `docker ps`. Inspect the log file in `BASEDIR/server/SERVER/admin/logging/...`
+- deploy the server (`RUN deploy SERVER`). Check the result with `docker ps`. Inspect the log file in `BASEDIR/server/SERVER/admin/logging/...`
 
 Looks more complicated as it is :-). I tried to make all scripts as robust as possible. Please mail any problems, improvements, ideas to reinhard.budde at
 iais.fraunhofer.de
@@ -52,20 +62,20 @@ iais.fraunhofer.de
 
 # (re-)create the base image (done from time to time)
 
-The docker "base" image is used as basis for the images, that run a version of the openrobrta lab. The version number of thee base image is used in
+The docker "base" image is used as basis for the images, that run a version of the openroberta lab. The version number of the base image is used in
 the `decl.sh` of each server. It contains all software needed by the lab to create binaries for all the robots, i.e.
 
-- the crosscompiler binaries itself. They are installed by calling `apt`, `wget`, ... .
-- header, libraries, scripts, ..., to be used together with the cross compiler.
+- the cross-compiler binaries itself. They are installed by calling `apt`, `wget`, ... .
+- header, libraries, scripts, ..., to be used together with the cross-compiler.
 
-This image is build in two steps. Because the crosscompiler binaries dont't change often, an image `openroberta/ccbin-${ARCH}` is build first. From this image
+This image is build in two steps. Because the cross-compiler binaries don't change often, an image `openroberta/ccbin-${ARCH}` is build first. From this image
 the `openroberta/base-${ARCH}` image is derived. This occurs more often. Both images have an independent version numbering.
 
-1. The image with crosscompiler binaries is very seldom build, because the crosscompiler binaries are stable. It is available at dockerhub.
+1. The image with cross-compiler binaries is very seldom build, because the cross-compiler binaries are stable. It is available at dockerhub.
    Name: `openroberta/ccbin-x64:<number>>`. The current version (19.4.2023) is _2_. The image is created using the shell
    command `RUN gen_ccbin <arch> <ccbin-version>`. The last build was `RUN gen_ccbin x64 2`.
 
-2. The image with crosscompiler resources is more often build, because our add-ons, e.g. header files, libs, ... change more frequently. The image is available
+2. The image with cross-compiler resources is more often build, because our add-ons, e.g. header files, libs, ... change more frequently. The image is available
    at dockerhub. Name: `openroberta/base-x64:<number>>`. The current version (19.4.2023) is _35_. To create it, you need a clone of our GitHub
    repository `ora-cc-rsc`, whose path is set in the command below (`CC_RESOURCES`). It contains the resources to be copied into the Docker image. \_Make sure,
    that the repository `ora-cc-rsc` is clean. Uncommitted data will be lost. The Docker image is created using the shell
@@ -83,14 +93,14 @@ data from that tag is the data stored in the base image.
 # Operating Instructions for the Test and Prod Server
 
 For developing the lab, we use a test server, which serves many different instances of the openroberta lab server. Our prod server runs the prod version of the
-openroberta lab server. They are setup in the same way. The following text describes the test server setup (the prod setup is the same, but uses a server
+openroberta lab server. They are set up in the same way. The following text describes the test server setup (the prod setup is the same, but uses a server
 named `master` only).
 
 ## Directory structure
 
 The template for our framework is contained in directory `Docker/openroberta`. It contains the directories
 
-- conf - contains an example of an nginx and an apache2 configuration and directories used to generate docker images for the db and the lab server
+- conf - contains an example of a nginx and an apache2 configuration and directories used to generate docker images for the db and the lab server
 
 - scripts - contains shell scripts to administrate the framework. The main script is `run.sh`. Call it without parameters to get help. the directory `helper`
   contains scripts, that are sourced from `run.sh` and do the "real" work.
@@ -139,12 +149,12 @@ docker ps                      # the container for 'dev4' should be running
 ## Web server software
 
 We need a running web server to distribute requests to the different openroberta lab servers. This is done with web server software. Apache and nginx are most
-popular. Inside the server docker container the port 1999 is used. When a server container is started, this port is mapped to a accessible port on the host
-machine (this maybe 1999 again, or 1998, ... or any other port. For instance, on the prod server
+popular. Inside the server docker container the port 1999 is used. When a server container is started, this port is mapped to an accessible port on the host
+machine (this maybe 1999 again, or 1998, ... or any other port). For instance, on the prod server
 
 - `container:1999` is mapped to
 - `host:8080` and
-- the web server maps that to the offical addresses `lab.open-roberta.org.443` and `lab.open-roberta.org.80`
+- the web server maps that to the official addresses `lab.open-roberta.org.443` and `lab.open-roberta.org.80`
 
 The nginx configuration examples are in the directory `z-nginx`. The configuration directory on the host machine is `/etc/nginx/`. In the example
 file `nginx.conf` see the ssl-, -server and include-section in the example file for the global configuration. The example file `lab.open-roberta`
@@ -157,7 +167,7 @@ Actually we are using nginx. Apache would do as well.
 All data is stored relative to a base directory `$BASE_DIR` (your choice, we use `/data/openroberta-lab`). Abbreviations:
 
 ```bash
-BASE_DIR=/data/openroberta-lab # the directory, in which the main configuration file 'decl.sh' is foundd
+BASE_DIR=/data/openroberta-lab # the directory, in which the main configuration file 'decl.sh' is found
 CONF_DIR=$BASE_DIR/conf
 SCRIPT_DIR=$BASE_DIR/scripts
 SERVER_DIR=$BASE_DIR/server
@@ -219,7 +229,7 @@ The database server is listening to the port `$DATABASE_SERVER_PORT` as defined 
 
 The shell script `$SCRIPT_DIR/run.sh` has commands, that are used for operating purposes.
 
-- `auto-deploy`: usually called from cron. It takes server names from the variable `AUTODEPLOY` from the glocal `decl.sh` and re-deploys each server, if the git
+- `auto-deploy`: usually called from cron. It takes server names from the variable `AUTODEPLOY` from the global `decl.sh` and re-deploys each server, if the git
   repository connected to this server has got new commits. Use `crontab -e` to add the following line to the crontab to look for commits every 5 minutes:
 
 ```bash
@@ -235,14 +245,14 @@ The shell script `$SCRIPT_DIR/run.sh` has commands, that are used for operating 
 ```
 
 - `cleanup-temp-user-dirs`: usually called from cron. It takes a server name and runs a shell in the corresponding container, that will remove temporary old
-  data allocated by the cross compiler. It is assumed, that these crosscompiler-allocated files are used not longer than one day after their creation.
+  data allocated by the cross-compiler. It is assumed, that these files allocated by the cross-compiler are used not longer than one day after their creation.
   Use `crontab -e` to add the following line to the crontab to remove garbage every night 20 minutes after two o'clock:
 
 ```bash
 20 2 * * * bash <SCRIPT_DIR>/run.sh -q admin <server-name> cleanup-temp-user-dirs >><BASE_DIR>/logs/cronlog.txt
 ```
 
-- `auto-restart`: this command spawns a process, that will not terminate by itself. It checks the availablity of the server (using the server-url)
+- `auto-restart`: this command spawns a process, that will not terminate by itself. It checks the availability of the server (using the server-url)
   and, if the server is not available when tried to access twice, it will restart the server. Logging info is written to `<BASE_DIR>/logs/autorestart.txt`. the
   pid of the auto-restart process is logged. The process may be terminated at any time. The process can be initiated explicitly by executing:
 
@@ -319,26 +329,26 @@ This feature is needed to protect against data loss if a server crashes. As the 
 the backups are copied, must be at least the safety requirements for the machine, that runs the database server. Ssh keys are used, thus a setup on both servers
 is needed. The two servers affected are called "SRC-SERVER" and "TARGET-SERVER".
 
-- On the TARGET-SERVER: check whether `ssh <anyExistingUser@TARGET-SERVER` succeeds.
-- On the TARGET-SERVER: `adduser dbBackup --force-badname`. The user's password has to be strong.
-- On the TARGET-SERVER: `cd <BASE_DIR_ON_TGT_S>/db/dbAdmin; mkdir -p dbBackupSave/<db-name>`
-  `chgrp dbBackup dbBackupSave dbBackupSave/<db-name>; chmod -R g+rwx dbBackup`.
-- On the TARGET-SERVER: `su dbBackup; ssh-keygen -t rsa -b 4096`.
-- On the SRC-SERVER: `adduser dbBackup --force-badname`. The user's password has to be strong.
+- On the TARGET-SERVER: check whether `ssh <anyExistingUser@TARGET-SERVER` succeeds
+- On the TARGET-SERVER: `adduser dbBackup --force-badname`. The user's password has to be strong
+- On the TARGET-SERVER: `cd <BASE_DIR_ON_TGT_SERVER/db/dbAdmin; mkdir -p dbBackupSave/<db-name>`
+  `chgrp dbBackup dbBackupSave dbBackupSave/<db-name>; chmod -R g+rwx dbBackupSave`
+- On the TARGET-SERVER: `su dbBackup` and in the shell opened run `ssh-keygen -t rsa -b 4096`
+- On the SRC-SERVER: `adduser dbBackup --force-badname`. The user's password has to be strong
 - On the SRC-SERVER: `cd <BASE_DIR_ON_SRC_S>/db/dbAdmin; chgrp -R dbBackup dbBackup; chmod -R g+rwx dbBackup`
-- On the TARGET-SERVER: `ssh-copy-id -i /home/dbBackup/.ssh/id_rsa.pub dbBackup@<SRC-SERVER>; ssh dbBackup@<SRC-SERVER> # test for success`.
+- On the TARGET-SERVER: `ssh-copy-id -i /home/dbBackup/.ssh/id_rsa.pub dbBackup@<SRC-SERVER>; ssh dbBackup@<SRC-SERVER> # test for success`
 
 How does it work?
 
 - On SRC-SERVER (for instance every day at 2:00 AM started by a cronjob) a database backup is generated. See the description above, how to achieve that. The
   backup is readable by all members of group `dbBackup`, to which user `dbBackup` belongs.
 - On TARGET-SERVER (for instance every day at 3:00 AM started by a cronjob) the database backup is saved to protect us against data loss. This works, because
-  user `dbBackup` on TARGET-SERVER can use `scp` for user `dbBackup` on SRC-SERVER and the ssh key installed above allows that. The rights on SRC-SERVER are
-  restricted to the rights of user `dbBackup` on SRC-SERVER. Essentially this is the access to the backup directory.
-  `The cronjob on TARGET-SERVER could look like (note, that the script runs as user`dbBackup`, and, that cron expects the command in one line).
+  user `dbBackup` on TARGET-SERVER can use `scp` for user `dbBackup` on SRC-SERVER, as the ssh key installed above allows that. The rights of the scp command 
+  are restricted to accessing the backup directory.
+- You can automate this by a crontab entry on TARGET-SERVER (note, that the script runs as user `dbBackup`, and, that cron expects the command in one line).
 
 ```bash
-0 3 * * * /usr/bin/sudo -u dbBackup <SCRIPT_DIR_ON_TGT_S>/run.sh -q backup-save
+0 3 * * * /usr/bin/sudo -u dbBackup <BASE_DIR_ON_TGT_SERVER>/scripts/run.sh -q backup-save
           dbBackup@<SRC-SERVER>:<BASE_DIR_ON_SRC_S>/db/dbAdmin/dbBackup/<db-name> db/dbAdmin/dbBackupSave/<db-name>
           >><BASE_DIR>/logs/cronlog.txt 2>&1
 ```
@@ -356,4 +366,4 @@ arbitrary number of command line arguments like `-d KEY=VALUE`. The final list o
   mount points.
 - variable `START_ARGS`: every OpenRoberta server has a configuration file `decl.sh`. Here the shell variable `START_ARGS` can define more `-d` arguments.
   _NOTE:_ this is the place for the last deployer-defined additions: declare the list of robot plugins to use, whether this is the public server or not, and so
-  on. It is possible, but _not_ adviced to overwrite properties already defined at the two other places described above
+  on. It is possible, but _not_ advised to overwrite properties already defined at the two other places described above

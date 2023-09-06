@@ -31,7 +31,7 @@ new-docker-setup) base_dir="$1"
                 fi
                 cp -r openroberta $base_dir
                 cp README.md $base_dir
-                echo 'New docker setup created in $base_dir. Please read the README.md of the git repository "OpenRoberta/docker"' ;;
+                echo "New docker setup created in $base_dir. Please read the README.md of the git repository \"OpenRoberta/docker\"" ;;
 
 new-server-in-docker-setup)
                 base_dir="$1"
@@ -49,7 +49,7 @@ new-server-in-docker-setup)
                   exit 12
                 fi
                 cp -r openroberta/server/_server-template $server_dir
-                echo "New server $server_name created. Please read the README.md of the git repository \"OpenRoberta/docker\"" ;;
+                echo "New server $server_name created. Please read the README.md of the git repository 'OpenRoberta/docker'" ;;
 
 update-docker-setup)
                 base_dir="$1"
