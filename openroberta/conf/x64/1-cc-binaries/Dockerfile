@@ -29,6 +29,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y locales tzdata curl wget lbzip2 openjdk-8-jdk python3 python3-pip maven && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     pip3 install esptool && \
+    pip3 install pylint &&  \
     locale-gen de_DE.UTF-8 && \
     ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
     export DEBIAN_FRONTEND=noninteractive && \
