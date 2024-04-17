@@ -30,6 +30,7 @@ RUN apt-get update && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     pip3 install esptool && \
     pip3 install pylint &&  \
+    pip3 install mpy-cross-v6 &&  \
     locale-gen de_DE.UTF-8 && \
     ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
     export DEBIAN_FRONTEND=noninteractive && \
