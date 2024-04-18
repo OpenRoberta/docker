@@ -80,7 +80,7 @@ the `openroberta/base-${ARCH}` image is derived. This occurs more often. Both im
    repository `ora-cc-rsc`, whose path is set in the command below (`CC_RESOURCES`). It contains the resources to be copied into the Docker image. \_Make sure,
    that the repository `ora-cc-rsc` is clean. Uncommitted data will be lost. The Docker image is created using the shell
    command `RUN gen-base <arch> <ccbin-version> <base-version> <ora-cc-rsc-repo`. The last build
-   was `RUN gen-base x64 2 37 /data/openroberta-lab/git/ora-cc-rsc`  (19.4.2023).
+   was `RUN gen-base x64 3 38 38 /data/openroberta-lab/git/ora-cc-rsc`  (19.4.2023).
 
 _Note:_ If the git repository `ora-cc-rsc` is changed, the `openroberta/base-${ARCH}` image must be re-built. It should get a new version number (increase the
 last one used by 1). The variable `BASE_VERSION` in the `decl.sh` file of all servers contains this version number. If the image of a deployed server should use

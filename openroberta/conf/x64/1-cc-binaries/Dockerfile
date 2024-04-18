@@ -46,4 +46,4 @@ RUN dpkg -i libnewlib-dev_3.1.0.20181231-1_all.deb libnewlib-arm-none-eabi_3.1.0
 
 WORKDIR /opt/compiler
 COPY --from=builder /opt/compiler ./
-ENV PATH="${PATH}:/opt/compiler/avr/bin:/opt/compiler/gcc-arm-none-eabi-9-2019-q4-major/bin:/opt/compiler/xtensa-esp32-elf/bin"
+ENV PATH="${PATH}:/opt/compiler/avr/bin:/opt/compiler/gcc-arm-none-eabi-9-2019-q4-major/bin:/opt/compiler/xtensa-esp32-elf/bin:/usr/local/lib/python3.10/dist-packages"
