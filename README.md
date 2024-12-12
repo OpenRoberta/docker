@@ -71,16 +71,16 @@ the `decl.sh` of each server. It contains all software needed by the lab to crea
 This image is build in two steps. Because the cross-compiler binaries don't change often, an image `openroberta/ccbin-${ARCH}` is build first. From this image
 the `openroberta/base-${ARCH}` image is derived. This occurs more often. Both images have an independent version numbering.
 
-1. The image with cross-compiler binaries is very seldom build, because the cross-compiler binaries are stable. It is available at dockerhub.
+1. The image with the cross-compiler binaries is very seldom build, because the cross-compiler binaries are stable. It is available at dockerhub.
    Name: `openroberta/ccbin-x64:<number>>`. The image is created using the shell
    command `RUN gen-ccbin <arch> <ccbin-version>`. The last build was `RUN gen-ccbin x64 3` (19.4.2024).
 
-2. The image with cross-compiler resources is more often build, because our add-ons, e.g. header files, libs, ... change more frequently. The image is available
+2. The image with the cross-compiler resources is more often build, because our add-ons, e.g. header files, libs, ... change more frequently. The image is available
    at dockerhub. Name: `openroberta/base-x64:<number>>`. To create it, you need a clone of our GitHub
-   repository `ora-cc-rsc`, whose path is set in the command below (`CC_RESOURCES`). It contains the resources to be copied into the Docker image. \_Make sure,
-   that the repository `ora-cc-rsc` is clean. Uncommitted data will be lost. The Docker image is created using the shell
-   command `RUN gen-base <arch> <ccbin-version> <base-version> <ora-cc-rsc-repo`. The last build
-   was `RUN gen-base x64 3 38 38 /data/openroberta-lab/git/ora-cc-rsc`  (19.4.2023).
+   repository `ora-cc-rsc`, whose path is used in the command below (`<ora-cc-rsc-repo>`). It contains the resources to be copied into the Docker image. \_Make sure,
+   that the repository `ora-cc-rsc` is clean. Uncommitted data will be lost when the command is executed. The Docker image is created using the shell
+   command `RUN gen-base <arch> <ccbin-version> <oraccrsc-tag> <base-version> <ora-cc-rsc-repo>`. The last build
+   was `RUN gen-base x64 3 45 45 /data/openroberta-lab/git/ora-cc-rsc`  (12.12.2024).
 
 _Note:_ If the git repository `ora-cc-rsc` is changed, the `openroberta/base-${ARCH}` image must be re-built. It should get a new version number (increase the
 last one used by 1). The variable `BASE_VERSION` in the `decl.sh` file of all servers contains this version number. If the image of a deployed server should use
